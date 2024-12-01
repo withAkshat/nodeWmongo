@@ -77,6 +77,27 @@ app.post("/chats",(req,res)=>{
     res.redirect("/chats")
 })
 
+// Edit Route
+
+app.get("/chats/:id/edit", async (req,res)=>{
+    let { id }=req.params;
+    let chat = await Chat.findById(id);
+
+    res.render("edit.ejs", { id, chat })
+})
+
+// update route
+
+app.put("/chats/:id", (req,res)=>{
+    let { id } = req.params;
+    let { msg:newMsg } = req.body;
+
+    let updatedChat = Chat.findByIdAndUpdate(id, { msg:newMsg }, {runValidators : true, new: true }); 
+console.log(updatedChat);
+
+    res.redirect("/chats");
+})
+
 // --------------------------------------------------------------------------------------------
 
 app.get("/",(req,res)=>{

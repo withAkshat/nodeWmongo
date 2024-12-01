@@ -19,9 +19,15 @@
         
        <div class="msg">
         <p> <%= chat.msg %> </p>
+        <form action="/chats/<%= chat._id %>/edit">
+            <button >Edit</button>
+        </form>
+
        </div>
        
         <p> Recieved By: <i><%= chat.to %></i> </p>
+        <p><%= chat.created_to.toString().split(" ")[4] %></p>
+        <p><%= chat.created_to.toString().split(" ").slice(0,4).join("-") %></p>
         <hr>
     </div>
     <br>
