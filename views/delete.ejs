@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB Delete</title>
+</head>
+<body>
+    <h1 class="mainH"> Are you sure you want to delete the selected Database %></h1>
+
+    <form method="POST" action="/chats/<%= chat._id %>?_method=DELETE">
+        <button>YES</button>
+    </form>
+    <form action="/chats">
+        <button>No</button>
+    </form>
+</body>
+</html>

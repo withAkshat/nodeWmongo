@@ -83,18 +83,38 @@ app.get("/chats/:id/edit", async (req,res)=>{
     let { id }=req.params;
     let chat = await Chat.findById(id);
 
-    res.render("edit.ejs", { id, chat })
+    res.render("edit.ejs", { chat })
 })
 
 // update route
 
-app.put("/chats/:id", (req,res)=>{
+app.put("/chats/:id", async (req,res)=>{
     let { id } = req.params;
     let { msg:newMsg } = req.body;
 
-    let updatedChat = Chat.findByIdAndUpdate(id, { msg:newMsg }, {runValidators : true, new: true }); 
+    let updatedChat =await Chat.findByIdAndUpdate(id, { msg:newMsg }, {runValidators : true, new: true }); 
 console.log(updatedChat);
 
+    res.redirect("/chats");
+})
+
+// Destroy Route
+
+app.get("/chats/:id/delete", async (req,res)=>{
+
+        let { id } = req.params;
+        let chat = await Chat.findById(id);
+
+        res.render("delete.ejs" , {  chat })
+    
+   
+    
+})
+
+app.delete("/chats/:id", async (req,res)=>{
+    let { id } = req.params;
+    let deletedChat = await Chat.findByIdAndDelete(id);
+    console.log(deletedChat);
     res.redirect("/chats");
 })
 
@@ -104,3 +124,19 @@ app.get("/",(req,res)=>{
     res.send("everthing fine")
 })
 
+
+
+// let ask = prompt("Are you sure you want to Delete?");
+    
+// if(ask==="yes"||ask==="Yes"){
+//     
+// }
+// else if(ask==="no"||ask==="No"){
+//     alert("You got saved");
+    
+// }
+
+// else{
+//     alert("Wrong Input");
+    
+// }
