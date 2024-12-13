@@ -16,10 +16,13 @@ app.use(express.urlencoded({extended:true}))
 
 // -----------------------------------------------------------------------------------------
 
+const ExpressError = require('./ExpressError')
+
+// -------------------------------------------------------------------------------------------
 const mongoose = require('mongoose');
 
 async function main(){
-    await mongoose.connect('mongodb://127.0.0.1:27017/WhatsApp')
+    await mongoose.connect('mongodb://127.0.0.1:27017/FakeWhatsApp')
 }
 
 main()
@@ -111,11 +114,35 @@ app.get("/chats/:id/delete", async (req,res)=>{
     
 })
 
+
+// New Show Route
+
+app.get("/chats/:id",async (req,res, next)=>{
+
+    let { id }= req.params;
+    let chat = await Chat.findById(id);
+
+    if (!chat){
+        next(new ExpressError(404,"Chat not found"))        
+    } 
+
+    res.render("edit.ejs", { chat });
+})
+
 app.delete("/chats/:id", async (req,res)=>{
     let { id } = req.params;
     let deletedChat = await Chat.findByIdAndDelete(id);
     console.log(deletedChat);
     res.redirect("/chats");
+})
+
+
+// Error Handling Middleware
+
+app.use((err,req,res, next)=>{
+
+    let { status =500 , message ="Some error Occured" } = err;
+    res.status(status).send(message);
 })
 
 // --------------------------------------------------------------------------------------------
