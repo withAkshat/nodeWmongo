@@ -16,7 +16,7 @@ app.use(express.urlencoded({extended:true}))
 
 // -----------------------------------------------------------------------------------------
 
-const ExpressError = require('./ExpressError')
+const ExpressError = require("./ExpressError")
 
 // -------------------------------------------------------------------------------------------
 const mongoose = require('mongoose');
@@ -43,7 +43,7 @@ app.get("/chats", async (req,res)=>{
 
     let chats = await Chat.find();
     
-    console.log(chats)
+    // console.log(chats)
     res.render("index.ejs", { chats });
     
     
@@ -53,13 +53,37 @@ app.get("/chats", async (req,res)=>{
 // New Chat
 
 app.get("/chats/new",(req,res)=>{
+    // throw new ExpressError(404, "page not found")
     res.render("new.ejs")
 })
 
+
+// New Show Route
+
+app.get("/chats/:id", async (req,res, next)=>{
+
+   try{
+    let { id }= req.params;
+    let chat = await Chat.findById(id);
+    // console.log(chat);
+    
+
+    if ( !chat ){
+        next(new ExpressError(404,"Chat not found"))
+    } 
+
+    res.render("edit.ejs", { chat });
+   }catch(err){
+        next(err);
+   }
+})
+
+
 // Create Chat
 
-app.post("/chats",(req,res)=>{
-    let { from, to,msg } = req.body;
+app.post("/chats",async (req,res,next)=>{
+    try{
+        let { from, to,msg } = req.body;
 
     let newChat = new Chat({
         from: from,
@@ -68,16 +92,13 @@ app.post("/chats",(req,res)=>{
         created_to: new Date(),
     })
 
-    newChat.save()
-    .then((res)=>{
-        console.log(res);
-        
-    }).catch((err)=>{
-        console.log(err);
-        
-    })
-
+    await newChat.save();
+    
     res.redirect("/chats")
+    }
+    catch(err){
+        next(err)
+    }
 })
 
 // Edit Route
@@ -115,19 +136,6 @@ app.get("/chats/:id/delete", async (req,res)=>{
 })
 
 
-// New Show Route
-
-app.get("/chats/:id",async (req,res, next)=>{
-
-    let { id }= req.params;
-    let chat = await Chat.findById(id);
-
-    if (!chat){
-        next(new ExpressError(404,"Chat not found"))        
-    } 
-
-    res.render("edit.ejs", { chat });
-})
 
 app.delete("/chats/:id", async (req,res)=>{
     let { id } = req.params;
